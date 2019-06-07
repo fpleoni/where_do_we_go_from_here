@@ -69,9 +69,6 @@ docs/_build/
 # PyBuilder
 target/
 
-# Jupyter Notebook
-.ipynb_checkpoints
-
 # pyenv
 .python-version
 
@@ -102,3 +99,13 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Jupyter Notebook hidden files
+.ipynb_checkpoints
+.ipynb
+
+# config file
+config.py
+
+# Large files
+*.csv
