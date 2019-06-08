@@ -106,6 +106,3 @@ venv.bak/
 
 # config file
 config.py
-
-# Large files
-*.csv
