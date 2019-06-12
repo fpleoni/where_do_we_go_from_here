@@ -206,7 +206,7 @@ def hotel_embeddings(embedding_size = 100):
     
     merged = Dense(1, activation = "sigmoid")(merged)
     model = Model(inputs = [item, tag, price, location], outputs = merged)
-    model.compile(optimizer = "Adam", loss = "sparse_categorical_crossentropy", metrics = ["accuracy"])
+    model.compile(optimizer = "Adam", loss = "binary_crossentropy", metrics = ["accuracy"])
     
     return model
 
@@ -227,7 +227,7 @@ generator = generate_batch(hotel_tuples, n_positive, negative_ratio = 1)
 
 # Train
 
-item_property = model.fit_generator(generator, epochs = 100, 
+item_property = model.fit_generator(generator, epochs = 50, 
                                     steps_per_epoch = len(hotel_tuples) // n_positive, verbose = 2)
 
 
