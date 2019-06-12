@@ -206,7 +206,7 @@ def hotel_embeddings(embedding_size = 100):
     
     merged = Dense(1, activation = "sigmoid")(merged)
     model = Model(inputs = [item, tag, price, location], outputs = merged)
-    model.compile(optimizer = "Adam", loss = "sparse_categorical_crossentropy", metrics = ["accuracy"])
+    model.compile(optimizer = "Adam", loss = "binary_crossentropy", metrics = ["accuracy"])
     
     return model
 
