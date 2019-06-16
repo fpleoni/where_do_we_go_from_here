@@ -235,6 +235,6 @@ item_property = model.fit_generator(generator, epochs = 50,
 
 
 # Save model
-model.save("../models/embeddings_second_attempt.h5")
-model.save_weights("../models/embeddings_second_attempt_weights.h5")
+model.save("../models/embeddings_third_attempt.h5")
+model.save_weights("../models/embeddings_third_attempt_weights.h5")
 
