@@ -806,7 +806,7 @@ generator = generate_batch(hotel_tuples, n_positive, negative_ratio = 1)
 
 # Train
 
-item_property = model.fit_generator(generator, epochs = 100, 
+item_property = model.fit_generator(generator, epochs = 20, 
                                     steps_per_epoch = len(hotel_tuples) // n_positive, verbose = 2)
 
 
