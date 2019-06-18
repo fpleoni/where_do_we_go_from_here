@@ -33,3 +33,4 @@ def hotel():
 @app.route("/baseline")
 def baseline():
   return jsonify(recommender.baseline())
+

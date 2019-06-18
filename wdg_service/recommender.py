@@ -22,6 +22,7 @@ def get_df():
 
 def get_baseline_df():
     """ Return dataframe with baseline recommendations """
+    
     # Path to file
     recommendations_path = "../data/baseline_recommendations.csv"
 
@@ -44,6 +45,45 @@ def baseline():
     recommendations_df = get_baseline_df()
     recommendations = recommendations_df.to_dict(orient = "list")
     return recommendations
+
+def citybased_recommendation_baseline(city):
+    """ Returns top hotel recommendations for a """
+    
+    hotels_df = get_df()
+
+    best_reviews = hotels_df[hotels_df["rating"] >= 4.0]
+    best_reviews = best_reviews.sort_values(by = ["popularity_rating", "rating", "price"], axis = 0, 
+                         ascending = [False, False, True])
+    best_reviews = best_reviews.reset_index(drop = True)
+    
+    # Get the hotels with 5.0 ratings that satisfy the keyword
+    idxs = list(best_reviews[best_reviews["city"] == city].index)
+    
+    # Create lists to store results
+    name = []
+    city = []
+    country = []
+    url = []
+    landmark = []
+    locality = []
+    rating = []
+    popularity = []
+    
+    # Loop through all idxs in the flattened id list, and add the info at each idx row to dictionary
+    for idx in idxs:
+        city.append(best_reviews.at[idx, "city"])
+        country.append(best_reviews.at[idx, "country"])
+        name.append(best_reviews.at[idx, "hotel_name"])
+        rating.append(best_reviews.at[idx, "rating"])
+        popularity.append(best_reviews.at[idx, "popularity_rating"])
+        landmark.append(best_reviews.at[idx, "landmark"])
+        locality.append(best_reviews.at[idx, "locality"])
+        url.append(best_reviews.at[idx, "URL"])
+        
+    hotels = [{"name": n, "city": c + ", " + p, "url": u, "landmark": l,
+                    "locality": t, "rating": r} for n, c, p, u, l, t, r 
+                  in zip(name, city, country, url, landmark, locality, rating)]
+    return hotels
 
 def get_int_mapping(dataframe, column):
     """ Returns index, reverse_index, and list of unique items in a pandas datframe """
