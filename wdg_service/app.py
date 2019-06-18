@@ -5,6 +5,8 @@ import data
 import recommender
 app = Flask(__name__)
 
+city_weights = recommender.get_embeddings("city_embedding")
+hotel_weights = recommender.get_embeddings("hotel_embedding")
 
 @app.route("/cities")
 def cities():
@@ -14,8 +16,7 @@ def cities():
 def city():
   requested_city = request.get_json()["name"]
   
-  city_weights = recommender.get_embeddings("city_embedding")
-  recommended_cities = recommender.find_similar(requested_city, city_weights, index_name = "city", n = 20, 
+  recommended_cities = recommender.find_similar_cities(requested_city, city_weights, index_name = "city", n = 20, 
                         filtering = False, filter_name = None)
 
   return jsonify(recommended_cities)
@@ -24,8 +25,7 @@ def city():
 def hotel():
   requested_hotel = request.get_json()["name"]
   
-  hotel_weights = recommender.get_embeddings("hotel_embedding")
-  recommended_hotels = recommender.find_similar(requested_hotel, hotel_weights, index_name = "hotel_name", n = 20, 
+  recommended_hotels = recommender.find_similar_hotels(requested_hotel, hotel_weights, index_name = "hotel_name", n = 20, 
                         filtering = False, filter_name = None)
 
   return jsonify(recommended_hotels)
