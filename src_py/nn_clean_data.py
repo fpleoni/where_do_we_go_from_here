@@ -21,7 +21,7 @@ import random
 
 
 # Path to file
-hotels_path = "../data/clean_hotels_scraped.csv"
+hotels_path = "../data/clean_hotels_scraped_v2.csv"
 
 # Dataframe
 hotels_df = pd.read_csv(hotels_path, usecols = ["city", "country", "hotel_name", "rating",
