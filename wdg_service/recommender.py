@@ -1,19 +1,22 @@
 # Import libraries
 from collections import Counter, OrderedDict
 from itertools import chain
+from  more_itertools import unique_everseen
 import numpy as np
 import pandas as pd
 import random
 import tensorflow as tf
 from keras import models
 import warnings
+import functools
+import operator
 warnings.filterwarnings("ignore")
 
 def get_df():
     """ Returns main dataframe used in the project """
 
     # Path to file
-    hotels_path = "../data/clean_hotels_test.csv"
+    hotels_path = "../data/clean_hotels_scraped_v2.csv"
     # Dataframe
     hotels_df = pd.read_csv(hotels_path, usecols = ["city", "country", "hotel_name", "rating", 
                                                     "address", "popularity_rating", "locality", "price",
@@ -32,12 +35,25 @@ def get_baseline_df():
                                                 "landmark", "URL"])
     return recommendations_df
 
+def get_all_cities():
+    """ Return list with available cities """   
+    
+    hotels_df = get_df()
+    
+    city_country_list = list(set(map(lambda x: (x[0], x[0] + ", " + x[1]),zip(hotels_df["city"], hotels_df["country"]))))
+    
+    city_country = []
+    for entry in city_country_list:
+        city_country.append(entry[1])
+    
+    return city_country
+
 def get_model():
     """ Return model architecture and weights """
 
     # Import embeddings model and weights
-    model = models.load_model("../models/embeddings_fourth_attempt.h5")
-    model.load_weights("../models/embeddings_fourth_attempt_weights.h5")
+    model = models.load_model("../models/nn_scraped_hotels.h5")
+    model.load_weights("../models/nn_scraped_hotels_weights.h5")
     return model
 
 # Unpersonalized recommendations
@@ -63,7 +79,7 @@ def baseline():
               'Anaheim', 'Fukuoka', 'Fort Lauderdale']
     
     indexes = []
-    
+    hotels_df = get_df()
     # Best reviews
     best_reviews = hotels_df[hotels_df["rating"] >= 4.5]
     best_reviews = best_reviews[best_reviews["popularity_rating"] > 100]
@@ -119,11 +135,12 @@ def citybased_recommendation_baseline(location):
     # Separate location in city and country
     location = location.split(",")
     city = location[0].strip()
-    country = location[1]
+    country = location[1].strip()
     
     # Get the hotels that satisfy the keyword
-    subset_of_df = best_reviews_2[best_reviews_2["city"] == city]
+    subset_of_df = best_reviews[best_reviews["city"] == city]
     idxs = list(subset_of_df[subset_of_df["country"] == country].index)
+    
     
     # Create lists to store results
     name = []
@@ -158,7 +175,7 @@ def get_int_mapping(dataframe, column):
     column_to_list = dataframe[column].tolist()
 
     # Find set of unique items and convert to a list
-    unique_items_list = list(set(column_to_list))
+    unique_items_list = list(unique_everseen(column_to_list))
 
     # Create indexes for each item
     item_index = {item: idx for idx, item in enumerate(unique_items_list)}
@@ -195,9 +212,8 @@ def find_similar_hotels(name, weights, index_name = "hotel_name", n = 20,
 
 
     # Select index and reverse index
-    if index_name == "hotel_name":
-        index = hotel_index
-        rindex = index_hotel
+    index = hotel_index
+    rindex = index_hotel
 
     # Check name is in index
     try:
@@ -262,13 +278,13 @@ def find_similar_hotels(name, weights, index_name = "hotel_name", n = 20,
         hotel_name = rindex[c]
         match_df = hotels_df[hotels_df["hotel_name"].str.match(hotel_name)]
         for idxs, rows in match_df.iterrows():
-            city.append(hotels_df.at[idxs, "city"])
-            country.append(hotels_df.at[idxs, "country"])
-            name.append(hotels_df.at[idxs, "hotel_name"])
-            url.append(hotels_df.at[idxs, "URL"])
-            landmark.append(hotels_df.at[idxs, "landmark"])
-            locality.append(hotels_df.at[idxs, "locality"])
-            rating.append(hotels_df.at[idxs, "rating"])
+            city.append(match_df.at[idxs, "city"])
+            country.append(match_df.at[idxs, "country"])
+            name.append(match_df.at[idxs, "hotel_name"])
+            url.append(match_df.at[idxs, "URL"])
+            landmark.append(match_df.at[idxs, "landmark"])
+            locality.append(match_df.at[idxs, "locality"])
+            rating.append(match_df.at[idxs, "rating"])
     hotels = [{"name": n, "city": c + ", " + p, "url": u, "landmark": l,
                     "locality": t, "rating": r} for n, c, p, u, l, t, r 
                     in zip(name, city, country, url, landmark, locality, rating)]
@@ -280,19 +296,16 @@ def find_similar_cities(name, weights, index_name = "city", n = 20,
     
     # Split location string in city and country   
     location_name = name.split(",")
-    name = location[0].strip()
-    country_name = location[1]
+    name = location_name[0].strip()
+    country_name = location_name[1]
 
     hotels_df = get_df()
 
-#     # Mapping hotels to integers with get_int_mapping().
+    # Mapping hotels to integers with get_int_mapping().
     city_index, index_city, unique_cities = get_int_mapping(hotels_df, "city")
-
    
-    # Select index and reverse index
-    if index_name == "city":
-        index = city_index
-        rindex = index_city
+    index = city_index
+    rindex = index_city
 
     # Check name is in index
     try:
@@ -307,18 +320,13 @@ def find_similar_cities(name, weights, index_name = "city", n = 20,
         
     # Find the most similar
     closest = sorted_distances[-n:-1]
+
+    cities = []
     
-    # Limit results by filtering
-    filter_ = None
-    hotel_name = []
-    city = []
-    country = []
-    url = []
-    landmark = []
-    locality = []
-    rating = []
+    city_country_list = list(set(map(lambda x: (x[0], x[0] + ", " + x[1]),zip(get_df()['city'], get_df()['country']))))
     
     if filtering:
+        filter_ = None
         for idxs, rows in hotels_df.iterrows():
             if hotels_df.at[idxs, "city"] == name:
                 filter_ = hotels_df.at[idxs, filter_name]
@@ -333,43 +341,14 @@ def find_similar_cities(name, weights, index_name = "city", n = 20,
         match_df = match_df.sort_values(by = ["distance"], axis = 0, ascending = False)
         to_drop = [name]
         match_df = match_df[~match_df["city"].isin(to_drop)]
-        hotel_name = match_df["hotel_name"].to_list()
         city = match_df["city"].to_list()
         country = match_df["country"].to_list()
-        url = match_df["URL"].to_list()
-        landmark = match_df["landmark"].to_list()
-        locality = match_df["locality"].to_list()
-        rating = match_df["rating"].to_list()
-        hotels = [{"name": n, "city": c + ", " + p, "url": u, "landmark": l,
-                    "locality": t, "rating": r} for n, c, p, u, l, t, r 
-                  in zip(hotel_name, city, country, url, landmark, locality, rating)]
-        return hotels
+    else:
+        # Create json objects of similar cities
+        for c in reversed(closest):
+            for city_country in city_country_list:
+                if city_country[0] == rindex[c]:
+                    cities.append(city_country[1])
+                    break
     
-    # Create json objects of similar cities 
-    city = []
-    country = []
-    name = []
-    url = []
-    landmark = []
-    locality = []
-    rating = []
-    for c in reversed(closest):
-        city_name = rindex[c]
-        match_df = hotels_df[hotels_df["city"].str.match(city_name)]
-        for idxs, rows in match_df.iterrows():
-            city.append(hotels_df.at[idxs, "city"])
-            country.append(hotels_df.at[idxs, "country"])
-            name.append(hotels_df.at[idxs, "hotel_name"])
-            url.append(hotels_df.at[idxs, "URL"])
-            landmark.append(hotels_df.at[idxs, "landmark"])
-            locality.append(hotels_df.at[idxs, "locality"])
-            rating.append(hotels_df.at[idxs, "rating"])
-    hotels = [{"name": n, "city": c + ", " + p, "url": u, "landmark": l,
-                    "locality": t, "rating": r} for n, c, p, u, l, t, r 
-                  in zip(name, city, country, url, landmark, locality, rating)]
-    return hotels
-
-
-
-
-
+    return cities

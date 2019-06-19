@@ -1,25 +1,25 @@
 from flask import Flask, jsonify, request
-#import recommender
-import random
 import data
 import recommender
 app = Flask(__name__)
 
 city_weights = recommender.get_embeddings("city_embedding")
 hotel_weights = recommender.get_embeddings("hotel_embedding")
+city_country_list = recommender.get_all_cities()
 
 @app.route("/cities")
 def cities():
-  return jsonify(data.all_cities())
+  return jsonify(city_country_list)
 
-@app.route("city", methods=["POST"])
+@app.route("/city", methods=["POST"])
 def city():
   requested_city = request.get_json()["name"]
-  
+
   recommended_cities = recommender.find_similar_cities(requested_city, city_weights, index_name = "city", n = 20, 
                         filtering = False, filter_name = None)
+  recommended_hotels = recommender.citybased_recommendation_baseline(requested_city)
 
-  return jsonify(recommended_cities)
+  return jsonify({"cities": recommended_cities, "hotels": recommended_hotels})
 
 @app.route("/hotel", methods=["POST"])
 def hotel():
@@ -33,15 +33,4 @@ def hotel():
 @app.route("/hotels/global")
 def baseline():
   return jsonify(recommender.baseline())
-
-@app.route("/hotels/city")
-def city_baseline():
-  requested_city = request.get_json()["name"]
-  
-  recommended_hotels = recommender.citybased_recommendation_baseline(requested_city)
-    
-  return jsonify(recommended_hotels)
-
-
-
 
