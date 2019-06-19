@@ -40,13 +40,73 @@ def get_model():
     model.load_weights("../models/embeddings_fourth_attempt_weights.h5")
     return model
 
+# Unpersonalized recommendations
 def baseline():
     """ Returns a json object with baseline recommendations to address the cold-start problem """
-    recommendations_df = get_baseline_df()
-    recommendations = recommendations_df.to_dict(orient = "list")
-    return recommendations
 
-def citybased_recommendation_baseline(city):
+    # Get list of most popular cities
+    cities = ['London', 'Paris', 'Istanbul', 'New York', 'Rio de Janeiro', 'Amsterdam', 'Rome', 'Cancun', 
+              'Tokyo', 'Berlin', 'Dubai', 'Madrid', 'Las Vegas', 'Barcelona', 'Prague', 'São Paulo', 'Natal', 
+              'Florianópolis', 'Buenos Aires', 'Orlando', 'Bangkok', 'Kuala Lumpur', 'Miami Beach', 'Vienna', 
+              'Porto Seguro', 'Milan', 'Foz do Iguaçu', 'Playa del Carmen', 'Osaka', 'Hamburg', 'Sydney', 
+              'Armação dos Búzios','Melbourne', 'Maceió', 'Fortaleza', 'Porto de Galinhas', 'Acapulco', 'Lisbon', 
+              'Singapore', 'Salvador Bahia','Puerto Vallarta', 'Gramado', 'Hong Kong', 
+              'Malacca', 'Mexico City', 'Guarujá', 'Ubatuba', 'Munich', 'Venice', 
+              'Budapest', 'Cartagena', 'Moscow', 'Edinburgh', 'Marrakech', 'Kyoto', 'Port Dickson', 
+              'Campos do Jordão','Florence', 'Balneário Camboriú', 'Paraty', 'Antalya', 'Mazatlán', 
+              'Caldas Novas', 'San Francisco', 'Dublin','Copenhagen', 'Cabo Frio', 'Mumbai', 
+              'Cologne', 'Ankara', 'Guadalajara', 'Ilhabela', 'Seoul', 'Arraial do Cabo', 
+              'Udaipur', 'Seville', 'Taipei City', 'St Petersburg', 'Miami', 'Québec City', 
+              'Morro de São Paulo', 'Curitiba','Athens', 'João Pessoa', 'São Sebastião', 
+              'Pattaya', 'Los Angeles', 'Bombinhas', 'Urayasu', 'Manchester','Praia da Pipa', 
+              'Brussels', 'Brisbane', 'Lake Buena Vista', 'Stockholm', 'Frankfurt', 'Auckland', 
+              'Anaheim', 'Fukuoka', 'Fort Lauderdale']
+    
+    indexes = []
+    
+    # Best reviews
+    best_reviews = hotels_df[hotels_df["rating"] >= 4.5]
+    best_reviews = best_reviews[best_reviews["popularity_rating"] > 100]
+    
+    # Sort best reviews by popularity rating and price
+    best_reviews = best_reviews.sort_values(by = ["popularity_rating"], axis = 0, 
+                         ascending = False)
+    # Reset index
+    best_reviews = best_reviews.reset_index(drop = True)
+    
+    for city in cities:
+        # Get the hotels with 5.0 ratings that are at each of the top cities
+        idxs = best_reviews[best_reviews["city"] == city].index
+        indexes.append(idxs)
+        
+    flatten = functools.reduce(operator.iconcat, indexes, [])
+    # Create lists to then create json object
+    name = []
+    city = []
+    country = []
+    url = []
+    landmark = []
+    locality = []
+    rating = []
+    popularity = []
+    # Loop through all idxs in the flattened id list, and add the info at each idx row to list
+    for i, idx in enumerate(flatten[:31]):
+        city.append(best_reviews.at[idx, "city"])
+        country.append(best_reviews.at[idx, "country"])
+        name.append(best_reviews.at[idx, "hotel_name"])
+        rating.append(best_reviews.at[idx, "rating"])
+        popularity.append(best_reviews.at[idx, "popularity_rating"])
+        landmark.append(best_reviews.at[idx, "landmark"])
+        locality.append(best_reviews.at[idx, "locality"])
+        url.append(best_reviews.at[idx, "URL"])
+    # Create json object
+    hotels = [{"name": n, "city": c + ", " + p, "url": u, "landmark": l,
+                    "locality": t, "rating": r} for n, c, p, u, l, t, r 
+                  in zip(name, city, country, url, landmark, locality, rating)]
+    return hotels
+    
+# Unpersonalized recommendations
+def citybased_recommendation_baseline(location):
     """ Returns top hotel recommendations for a """
     
     hotels_df = get_df()
@@ -56,8 +116,14 @@ def citybased_recommendation_baseline(city):
                          ascending = [False, False, True])
     best_reviews = best_reviews.reset_index(drop = True)
     
-    # Get the hotels with 5.0 ratings that satisfy the keyword
-    idxs = list(best_reviews[best_reviews["city"] == city].index)
+    # Separate location in city and country
+    location = location.split(",")
+    city = location[0].strip()
+    country = location[1]
+    
+    # Get the hotels that satisfy the keyword
+    subset_of_df = best_reviews_2[best_reviews_2["city"] == city]
+    idxs = list(subset_of_df[subset_of_df["country"] == country].index)
     
     # Create lists to store results
     name = []
@@ -213,6 +279,11 @@ def find_similar_hotels(name, weights = hotel_weights, index_name = "hotel_name"
 def find_similar_cities(name, weights = city_weights, index_name = "city", n = 20, 
                         filtering = False, filter_name = None):
     """ Return json object with most similar cities """
+    
+    # Split location string in city and country   
+    location_name = name.split(",")
+    name = location[0].strip()
+    country_name = location[1]
 
     hotels_df = get_df()
 
@@ -299,3 +370,8 @@ def find_similar_cities(name, weights = city_weights, index_name = "city", n = 2
                     "locality": t, "rating": r} for n, c, p, u, l, t, r 
                   in zip(name, city, country, url, landmark, locality, rating)]
     return hotels
+
+
+
+
+
