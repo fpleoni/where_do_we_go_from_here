@@ -184,9 +184,7 @@ def get_embeddings(layer_name):
 
     return item_weights
 
-
-
-def find_similar_hotels(name, weights = hotel_weights, index_name = "hotel_name", n = 20, 
+def find_similar_hotels(name, weights, index_name = "hotel_name", n = 20, 
                     filtering = False, filter_name = None):
     """ Return json object with most similar hotels """
 
@@ -276,7 +274,7 @@ def find_similar_hotels(name, weights = hotel_weights, index_name = "hotel_name"
                     in zip(name, city, country, url, landmark, locality, rating)]
     return hotels
                 
-def find_similar_cities(name, weights = city_weights, index_name = "city", n = 20, 
+def find_similar_cities(name, weights, index_name = "city", n = 20, 
                         filtering = False, filter_name = None):
     """ Return json object with most similar cities """
     
