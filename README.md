@@ -7,13 +7,19 @@ Working with Trivago.com and Hotels.com data to create a destination recommender
 
 Below is a list that will help you navigate the project's repository.
 
-../jupyter_notebooks/ - **Notebooks with all the project stages**
-../src_py/ - **Scripts for Neural Networks**
-../wdg_service/ - **Scripts for web app API**
-../data/ - **.csv files with all datasets, both scraped and downloaded**
-../models/ - **.h5 files with model architecture and weights for all neural networks trained**
-../images/ - **Images used for README.md**
-../project_gear/ - **Presentation and Science Fair ready Jupyter Notebook**
+  ../jupyter_notebooks/ - **Notebooks with all the project stages**
+  
+  ../src_py/ - **Scripts for Neural Networks**
+  
+  ../wdg_service/ - **Scripts for web app API**
+  
+  ../data/ - **.csv files with all datasets, both scraped and downloaded**
+  
+  ../models/ - **.h5 files with model architecture and weights for all neural networks trained**
+  
+  ../images/ - **Images used for README.md**
+  
+  ../project_gear/ - **Presentation and Science Fair ready Jupyter Notebook**
 
 ## The Motivation
 
@@ -80,12 +86,18 @@ In the prototype web application, the baseline model is used to make recommendat
 The final model is a deep neural network with 450 layers. The main block-wise architecture is as following:
 
 1. Input Layer
+
 2. Embedding Layer
+
 3. Interaction Gate Layer: Embedding Wise Multiplication
+
 4. Global Max Pooling Layer
+
 5. Interaction Gate Layer: Pool Wise Dot Product
+
 6. Interaction Gate Layer: Sum
-7. Dense Layer
+
+7. Dense Layer: Sigmoid Activation Function
 
 The neural network was use to calculate the embeddings of all the features that defined a hotel entity in our dataset: Hotel Name, City, Country, Rating, Popularity, Price, Landmark and Locality. In order to achieve this we created a supervised learning classification problem, in which we had positive examples of hotels (real combinations of attributes) and negative examples of hotels (random -non real- combinations attributes), and trained the neural network to recognize one from the other; achieving a 90% accuracy score.
 
