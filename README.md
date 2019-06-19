@@ -2,6 +2,19 @@
 
 Working with Trivago.com and Hotels.com data to create a destination recommender system.
 
+
+## Repo Index
+
+Below is a list that will help you navigate the project's repository.
+
+../jupyter_notebooks/ - **Notebooks with all the project stages**
+../src_py/ - **Scripts for Neural Networks**
+../wdg_service/ - **Scripts for web app API**
+../data/ - **.csv files with all datasets, both scraped and downloaded**
+../models/ - **.h5 files with model architecture and weights for all neural networks trained**
+../images/ - **Images used for README.md**
+../project_gear/ - **Presentation and Science Fair ready Jupyter Notebook**
+
 ## The Motivation
 
 Recommender systems are an essential tool to enhance user experience. In the travel and hospitality industry, recommender systems play a crucial role in helping the user navigate through different offerings; effectively operating as a line of defense against consumer over-choice.
