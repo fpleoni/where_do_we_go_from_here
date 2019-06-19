@@ -210,7 +210,6 @@ def find_similar_hotels(name, weights, index_name = "hotel_name", n = 20,
     # Mapping hotels to integers with get_int_mapping().
     hotel_index, index_hotel, unique_hotels = get_int_mapping(hotels_df, "hotel_name")
 
-
     # Select index and reverse index
     index = hotel_index
     rindex = index_hotel
@@ -229,43 +228,6 @@ def find_similar_hotels(name, weights, index_name = "hotel_name", n = 20,
     # Find the most similar
     closest = sorted_distances[-n:-1]
 
-    # Limit results by filtering
-    filter_ = None
-    hotel_name = []
-    city = []
-    country = []
-    url = []
-    landmark = []
-    locality = []
-    rating = []
-
-    if filtering:
-        for idxs, rows in hotels_df.iterrows():
-            if hotels_df.at[idxs, "hotel_name"] == name:
-                filter_ = hotels_df.at[idxs, filter_name]
-                break
-        match_df = hotels_df[hotels_df[filter_name].str.match(filter_)]
-        match_df = match_df.reset_index(drop = True)
-        match_df["distance"] = None
-        for idxs, rows in match_df.iterrows():
-            item = match_df.at[idxs, "hotel_name"]
-            distance = np.dot(weights[index[item]], weights[index[name]])
-            match_df.loc[match_df.index[idxs], "distance"] = distance
-        match_df = match_df.sort_values(by = ["distance"], axis = 0, ascending = False)
-        to_drop = [name]
-        match_df = match_df[~match_df["hotel_name"].isin(to_drop)]
-        hotel_name = match_df["hotel_name"].to_list()
-        city = match_df["city"].to_list()
-        country = match_df["country"].to_list()
-        url = match_df["URL"].to_list()
-        landmark = match_df["landmark"].to_list()
-        locality = match_df["locality"].to_list()
-        rating = match_df["rating"].to_list()
-        hotels = [{"name": n, "city": c + ", " + p, "url": u, "landmark": l,
-                    "locality": t, "rating": r} for n, c, p, u, l, t, r 
-                    in zip(hotel_name, city, country, url, landmark, locality, rating)]
-        return hotels
-
     # Create json objects of similar hotels 
     city = []
     country = []
@@ -276,15 +238,16 @@ def find_similar_hotels(name, weights, index_name = "hotel_name", n = 20,
     rating = []
     for c in reversed(closest):
         hotel_name = rindex[c]
-        match_df = hotels_df[hotels_df["hotel_name"].str.match(hotel_name)]
-        for idxs, rows in match_df.iterrows():
-            city.append(match_df.at[idxs, "city"])
-            country.append(match_df.at[idxs, "country"])
-            name.append(match_df.at[idxs, "hotel_name"])
-            url.append(match_df.at[idxs, "URL"])
-            landmark.append(match_df.at[idxs, "landmark"])
-            locality.append(match_df.at[idxs, "locality"])
-            rating.append(match_df.at[idxs, "rating"])
+        if hotel_name != name:
+            match_df = hotels_df[hotels_df["hotel_name"].str.match(hotel_name)]
+            for idxs, rows in match_df.iterrows():
+                city.append(match_df.at[idxs, "city"])
+                country.append(match_df.at[idxs, "country"])
+                name.append(match_df.at[idxs, "hotel_name"])
+                url.append(match_df.at[idxs, "URL"])
+                landmark.append(match_df.at[idxs, "landmark"])
+                locality.append(match_df.at[idxs, "locality"])
+                rating.append(match_df.at[idxs, "rating"])
     hotels = [{"name": n, "city": c + ", " + p, "url": u, "landmark": l,
                     "locality": t, "rating": r} for n, c, p, u, l, t, r 
                     in zip(name, city, country, url, landmark, locality, rating)]
