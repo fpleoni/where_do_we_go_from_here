@@ -1,0 +1,43 @@
+html
+  head
+    link(rel='stylesheet', href='/static/stylesheets/city.css')
+    title= title
+  body(class="bg", style="background-image: url('/static/images/cities/"+name+"');")
+    div.header
+      h1=name
+    
+    div.card-container
+      each hotel in hotels.slice(0,5)
+        div.card
+          div.container
+            div
+              form(method='POST' action='/hotel')
+                input(type="hidden", name="hotel", value=hotel.name)
+                input(type="hidden", name="city", value=hotel.city)
+                a(href="#", onclick="this.parentNode.submit()") Show me more like this
+            div.hotel-icon
+              img.hotel-icon(src="/static/images/hotels/hotel-icon.jpeg")
+            div.hotel-name
+              h4
+                a(href=hotel.url, target="_blank")=hotel.name
+            div.rating=hotel.rating+" stars"
+            form(method='POST' action='/city')
+              input(type="hidden", name="city", value=hotel.city) 
+              a(href="#", onclick="this.parentNode.submit()")=hotel.city
+            div=hotel.locality
+            ul
+              each landmark in hotel.landmark.replace("[","").replace("]","").split(",")
+                li=landmark
+
+    h2(style="margin: 20px; color: #fff") Other cities you might enjoy
+    div.card-container
+      each city in cities
+        div
+          form(method='POST' action='/city')
+            input(type="hidden", name="city", value=city)
+            div.card(onclick="this.parentNode.submit()")
+              div.container
+                div(class="card-img-error", style="background-image: url('/static/images/cities/no-photo.png');")
+                div(class="card-img", style="background-image: url('/static/images/cities/"+city+"');")
+                h4(style="margin-top: 220px;")=city
+    

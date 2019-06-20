@@ -1,0 +1,33 @@
+html
+  head
+    link(rel='stylesheet', href='/static/stylesheets/hotel.css')
+    title=title
+  body(class="bg", style="background-image: url('/static/images/index/paris.png');")
+    div.header
+      h1="Hotels similar to " + title
+    
+    div.cta
+    
+    div.card-container
+      each hotel in hotels.slice(0,20)
+        div.card
+          div.container
+            div
+              form(method='POST' action='/hotel')
+                input(type="hidden", name="hotel", value=hotel.name)
+                input(type="hidden", name="city", value=hotel.city)
+                a(href="#", onclick="this.parentNode.submit()") Show me more like this
+            div.hotel-icon
+              img.hotel-icon(src="/static/images/hotels/hotel-icon.jpeg")
+            div.hotel-name
+              h4
+                a(href=hotel.url, target="_blank")=hotel.name
+            div.rating=hotel.rating+" stars"
+            form(method='POST' action='/city')
+              input(type="hidden", name="city", value=hotel.city) 
+              a(href="#", onclick="this.parentNode.submit()")=hotel.city
+            div=hotel.locality
+            ul
+              each landmark in hotel.landmark.replace("[","").replace("]","").split(",")
+                li=landmark
+    

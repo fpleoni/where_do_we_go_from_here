@@ -1,0 +1,110 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+div.header {
+    height: 80px;
+    background-color: rgba(255, 255, 255, 1);
+    border-bottom-right-radius: 40px;
+}
+
+h1 {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: #fff;
+    width: 300px;
+    margin-bottom: 50px;
+}
+
+.bg { 
+    /* Full height */
+    height: 100%; 
+    background-attachment:fixed;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.cta {
+    margin-top: 80px;
+    margin-left: 80px;
+}
+
+.ui-widget {
+    background-color: #fff;
+    border-radius: 5px;
+    width: 350px;
+}
+
+input#city {
+    height: 80px;
+    width: 300px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    border: 0px;
+    padding: 10px;
+    border-radius: 5px; 
+}
+
+button.btn {
+    border: 0;
+    background-color: transparent;
+    color: red;
+    font-size: 20pt;    
+}
+
+input#city:focus {
+    outline-width: 0;
+}
+
+.card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.8);
+    transition: 0.3s;
+    width: 280px;
+    background-color: white;
+    display: inline;
+    float: left;
+    margin: 20px;
+    border-radius: 5px;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+  
+/* Add some padding inside the card container */
+.container {
+    padding: 10px;
+    width: 250px;
+    height: 300px;
+}
+
+.card-container {
+    width: 100%;
+    margin: 0 auto;
+    float:left;
+}
+
+img.hotel-icon {
+    width: 50px;
+}
+
+div.rating {
+    float: right;
+}
+
+a:link, a:visited{
+    text-decoration: none;
+    color: blue;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:active {
+    text-decoration: underline;
+}

@@ -1,0 +1,102 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+div.header {
+    height: 80px;
+    background-color: rgba(255, 255, 255, 1);
+    border-bottom-right-radius: 40px;
+}
+
+h1 {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color:#000;
+    padding: 20px;
+}
+
+.bg { 
+    /* Full height */
+    height: 100%; 
+    background-attachment:fixed;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.dimmed {
+    position: relative;
+}
+
+.cta {
+    margin-top: 80px;
+    margin-left: 80px;
+    height: 200px;
+}
+
+.dimmed:after {
+    content: " ";
+    z-index: 1;
+    display: block;
+    position: absolute;
+    height: 150px;
+    width:100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.8);
+    transition: 0.3s;
+    width: 280px;
+    background-color: white;
+    display: inline;
+    float: left;
+    margin: 20px;
+    border-radius: 5px;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+  
+/* Add some padding inside the card container */
+.container {
+    padding: 10px;
+    width: 250px;
+    height: 300px;
+}
+
+.card-container {
+    width: 100%;
+    margin: 0 auto;
+    float:left;
+}
+
+img.hotel-icon {
+    width: 50px;
+}
+
+div.rating {
+    float: right;
+}
+
+
+a:link, a:visited{
+    text-decoration: none;
+    color: blue;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:active {
+    text-decoration: underline;
+}

@@ -238,9 +238,9 @@ def find_similar_hotels(name, weights, index_name = "hotel_name", n = 20,
     rating = []
     for c in reversed(closest):
         hotel_name = rindex[c]
-        if hotel_name != name:
-            match_df = hotels_df[hotels_df["hotel_name"].str.match(hotel_name)]
-            for idxs, rows in match_df.iterrows():
+        match_df = hotels_df[hotels_df["hotel_name"].str.match(hotel_name)]
+        for idxs, rows in match_df.iterrows():
+            if match_df.at[idxs, "hotel_name"] not in name:
                 city.append(match_df.at[idxs, "city"])
                 country.append(match_df.at[idxs, "country"])
                 name.append(match_df.at[idxs, "hotel_name"])
