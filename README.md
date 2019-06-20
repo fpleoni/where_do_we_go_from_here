@@ -21,6 +21,7 @@ Below is a list that will help you navigate the project's repository.
   
   ../project_gear/ - **Presentation and Science Fair ready Jupyter Notebook**
 
+
 ## The Motivation
 
 Recommender systems are an essential tool to enhance user experience. In the travel and hospitality industry, recommender systems play a crucial role in helping the user navigate through different offerings; effectively operating as a line of defense against consumer over-choice.
@@ -36,6 +37,7 @@ But who caters to those of us with wanderlust? The ones without plans written in
 
 Can we provide valuable destination recommendations using neural network embeddings to represent hotel features, and calculating cosine similarity between embeddings?
 
+
 ## The Project
 
 Using customer online interaction data from Trivago.com, and hotel data from Hotel.com, we created a recommender system that provides a relevant recommendation travel destination to the user.
@@ -46,21 +48,39 @@ Before deciding on using embeddings and cosine similarity to build the recommend
 
 Finally, we created a prototype product (a web application) to showcase some of the functionalities developed for the recommender system.
 
+
 ## The Data
 
 The dataset contains 422.380 hotels, in 22.567 different cities, across 198 countries.
 
 The data was scraped from Hotel.com, and it also includes locality, landmark, popularity, rating, price, URL, and address.
 
-
+![](../master/images/dataframe_sample.png)
 
 We also had a second dataset from Trivago.com. This dataset was downloaded through the RecSys Challenge 2019 website, and it had information on 15 million user interactions in Trivago's website, recorded over a period of week.
+
 
 ## Exploratory Data Analysis
 
 We explored both datasets in search of interesting and relevant pieces of information that could help steer the direction of the project, or that could be considered fun facts.
 
+Starting with the Trivago.com, we took a look at the devices from where the users browse the websites. And filtered it further down to get the devices where users *click-out* - meaning, that they are effectively *converting* through the sales funnel.
 
+![](../master/images/user_distribution_per_device.png)
+
+We were also curious as to the times of the day, and the days of the week with the highest conversion. Finding out that it was Monday evening was a **surprise**, but on second though it makes sense.
+
+![](../master/images/most_actives_hours.png)
+
+![](../master/images/most_active_days.png)
+
+Moving forward to the Hotels.com dataset, we looked at the cities and countries with the most advertised hotels:
+
+![](../master/images/cities_with_most_hotels.png)
+
+![](../master/images/countries_with_most_hotels.png)
+
+This exercise gave us an idea of the distribution of our data, and also gave us a picture of the people behind the screens.
 
 
 ## Baseline Model
@@ -80,6 +100,7 @@ These recommendations were obtained following these steps:
 5. Sort the result from **Step 4** by *Popularity*, *Price*, and *Rating*. 
 
 In the prototype web application, the baseline model is used to make recommendations in the home page.
+
 
 ## Final Model
 
@@ -102,6 +123,28 @@ The final model is a deep neural network with 450 layers. The main block-wise ar
 The neural network was use to calculate the embeddings of all the features that defined a hotel entity in our dataset: Hotel Name, City, Country, Rating, Popularity, Price, Landmark and Locality. In order to achieve this we created a supervised learning classification problem, in which we had positive examples of hotels (real combinations of attributes) and negative examples of hotels (random -non real- combinations attributes), and trained the neural network to recognize one from the other; achieving a 90% accuracy score.
 
 Other important parameters tuned for this task were the optimizer: **Adadelta**, and the loss function: **Binary Cross-entropy**.
+
+For example, if you liked *Hôtel Henriette* in *Paris, France*; you may also like:
+
+#### In the same city:
+
+![](../master/images/hotel_filter_city.png)
+
+
+#### Anywhere in the world:
+
+![](../master/images/hotel_no_filter.png)
+
+
+We were curious as to what our embeddings looked like in a 2D vector space. Mostly, we wanted to check if there were any clear clusters of hotels. To this purpose we used PCA, and then plotted the results. 
+
+![](../master/images/PCA_cities.png)
+
+![](../master/images/PCA_countries.png)
+
+![](../master/images/PCA_localities.png)
+
+#### As you can see, we could not find any defined cluster using this method.
 
 
 ## Next Steps
